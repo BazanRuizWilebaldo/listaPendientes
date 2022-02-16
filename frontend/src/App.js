@@ -73,16 +73,35 @@ class App extends React.Component {
                       </div>
                     </div>
                   </form>
+
+
+
                 </div>
               </div>
 
-              <div>
+
+              <div >
                 {tasks.map(function (task, index) {
                   return (
-                    <p key={index}>
-                      <span>{task.title}</span>
+                    <div className="w-full  px-3 py-3 rounded-lg bg-gray-100 hover:bg-cyan-200 grid grid-cols-8 gap-1 mb-5 mt-5" key={index}>
+                      <div className=" col-span-4 sm:col-span-6 " >
+                        <input id="task" name="task" type="checkbox" className="accent-cyan-300 focus:accent-cyan-500  rounded" />
 
-                    </p>
+                        <span className="text-md  text-gray-800 sm:text-lg"> {task.title} </span>
+                      </div>
+                      <div className="col-span-2 sm:col-span-1">
+                        <button
+                          className="  bg-green-400 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                          edit
+                        </button>
+                      </div>
+                      <div className="col-span-2 sm:col-span-1">
+                        <button
+                          className="  bg-green-400 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                          delete
+                        </button>
+                      </div>
+                    </div>
                   )
                 })}
               </div>
