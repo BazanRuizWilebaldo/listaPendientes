@@ -7,9 +7,6 @@ y django-cors-headers para permitir la comunicacion de los recursos entre react 
 ---
 🧰 Lenguajes y Tecnologías 
 
-<img src="https://cdn.worldvectorlogo.com/logos/python-4.svg" alt="Python Logo" width="50" height="50" />
-<img src="https://cdn.worldvectorlogo.com/logos/django.svg" alt="django Logo" width="50" height="50" >
-<img src="https://cdn.worldvectorlogo.com/logos/react-2.svg" alt="react Logo" width="50" height="50" >
-<img src="https://cdn.worldvectorlogo.com/logos/tailwind-css-1.svg" alt="tailwind Logo" width="50" height="50" />
+<img src="https://cdn.worldvectorlogo.com/logos/python-4.svg" alt="Python Logo" width="50" height="50" /><img src="https://cdn.worldvectorlogo.com/logos/django.svg" alt="django Logo" width="50" height="50" ><img src="https://cdn.worldvectorlogo.com/logos/react-2.svg" alt="react Logo" width="50" height="50" ><img src="https://cdn.worldvectorlogo.com/logos/tailwind-css-1.svg" alt="tailwind Logo" width="50" height="50" />
 
 ---
