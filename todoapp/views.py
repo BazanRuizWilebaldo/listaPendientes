@@ -39,7 +39,6 @@ def taskDetail(request, pk):
 @api_view(["POST"])
 def taskCreate(request):
     serializer = TaskSerializer(data= request.data)
-    print(serializer.is_valid())
     if(serializer.is_valid()):
         serializer.save()
 

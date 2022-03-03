@@ -11,7 +11,6 @@ class App extends React.Component {
         id: null,
         title: '',
         completed: false,
-        status: '',
       },
       editing: false,
     }
@@ -19,12 +18,30 @@ class App extends React.Component {
     this.fetchTasks = this.fetchTasks.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.getCookie = this.getCookie.bind(this)
+    this.editarTarea = this.editarTarea.bind(this)
+    this.eliminarTarea = this.eliminarTarea.bind(this)
+
   };
 
   componentWillMount() {
     this.fetchTasks()
   }
 
+  getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
   fetchTasks() {
     console.log('obteninedo...')
 
@@ -56,11 +73,20 @@ class App extends React.Component {
     e.preventDefault()
     console.log('ITEM:', this.state.activeItem)
     var url = 'http://127.0.0.1:8000/api/task-create/'
+    var csrftoken = this.getCookie('csrftoken')
+
+    if (this.state.editing === true) {
+      url = `http://127.0.0.1:8000/api/task-update/${this.state.activeItem.id}/`
+      this.setState({
+        editing: false
+      })
+    }
 
     fetch(url, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
+        'X-CSRFToken': csrftoken,
       },
       body: JSON.stringify(this.state.activeItem)
     }).then((response) => {
@@ -70,7 +96,6 @@ class App extends React.Component {
           id: null,
           title: '',
           completed: false,
-          status: '',
         }
       })
     }).catch(function (error) {
@@ -78,17 +103,60 @@ class App extends React.Component {
     })
   }
 
+  editarTarea(task) {
+    this.setState({
+      activeItem: task,
+      editing: true,
+    })
+
+  }
+
+  eliminarTarea(task) {
+    var csrftoken = this.getCookie('csrftoken')
+    fetch(`http://127.0.0.1:8000/api/task-delete/${task.id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      }
+    }).then((response) => {
+      this.fetchTasks()
+    })
+  }
+
+  completarTarea(task) {
+
+    task.completed = !task.completed
+    var csrftoken = this.getCookie('csrftoken')
+    var url = `http://127.0.0.1:8000/api/task-update/${task.id}/`
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      body: JSON.stringify({ 'completed': task.completed, 'title': task.title })
+    }).then(() => {
+      this.fetchTasks()
+    })
+
+    console.log('TASK:', task.completed)
+  }
+
+
 
   render() {
     var tasks = this.state.todoList
+    var self = this
 
     return (
 
-      <div className="w-full h-screen font-sans bg-cover bg-landscape">
-        <div className="container flex items-center justify-center flex-1 h-full mx-auto">
-          <div className="w-full max-w-5xl">
+      <div className="w-full h-fit min-h-screen font-sans  bg-gradient-to-r from-teal-300 via-cyan-400 to-lime-300">
+        <div className="container  flex  justify-center flex-1 mx-auto  ">
+          <div className="w-full max-w-5xl  h-full ">
 
-            <div className="flex flex-col  px-4 py-8 bg-white rounded-lg drop-shadow-2xl dark:bg-gray-800 sm:px-6 md:px-8 lg:px-10">
+            <div className="flex flex-col  px-4 py-8 bg-white backdrop-filter backdrop-blur-lg bg-opacity-60  rounded-lg drop-shadow-2xl dark:bg-gray-800 sm:px-6 md:px-8 lg:px-10">
 
               <div className="self-center mb-2 text-xl font-light text-gray-800 sm:text-2xl dark:text-white">
                 Lista de Tareas Pendientes
@@ -99,19 +167,19 @@ class App extends React.Component {
                 <div className="mt-5 md:mt-0 md:col-span-4">
                   <form onSubmit={this.handleSubmit} id="form">
                     <div className="">
-                      <div className=" bg-white sm:p-6">
+                      <div className=" sm:p-6">
                         <div className="grid grid-cols-6 gap-6">
                           <div className="col-span-6 sm:col-span-5">
-                            <input onChange={this.handleChange} type="text" id="create-account-pseudo"
+                            <input onChange={this.handleChange} value={this.state.activeItem.title} type="text" id="create-account-pseudo"
                               className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-transparent"
                               name="title" placeholder="tarea" />
                           </div>
 
                           <div className="col-span-6 sm:col-span-1">
                             <button type="submit" id="submit"
-                              className="py-2 px-4  bg-cyan-400 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
-                            > Agregar 
-                              </button>
+                              className="py-2 px-4  bg-cyan-400 hover:bg-cyan-700 focus:ring-cyan-500 focus:ring-cyan-purple-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+                            > agregar
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -127,14 +195,31 @@ class App extends React.Component {
               <div >
                 {tasks.map(function (task, index) {
                   return (
-                    <div className="w-full  px-3 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 grid grid-cols-8 gap-1 mb-5 mt-5" key={index}>
-                      <div className=" col-span-4 sm:col-span-6 " >
-                        <input id="task" name="task" type="checkbox" className="accent-cyan-300 focus:accent-cyan-500  rounded" />
+                    <div className="w-full  px-3 py-3   rounded-lg hover:bg-gray-100  grid grid-cols-8 gap-1 mb-5 mt-5" key={index}>
+                      <div onClick={() => self.completarTarea(task)} className=" col-span-4 sm:col-span-6 flex justify-left  "  >
 
-                        <span className="text-md  text-gray-800 sm:text-lg"> {task.title} </span>
+                        {task.completed === false ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 22 22" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        ) :
+                          (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 22 22" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          )
+                        }
+
+
+                        {task.completed === false ? (
+                          <span className=" p-1 text-md  text-gray-800 sm:text-lg">     {task.title} </span>
+                        ) : (
+                          <span className=" p-1 text-md line-through decoration-2 text-gray-800 sm:text-lg"> {task.title} </span>
+                        )}
+
                       </div>
                       <div className="col-span-2 sm:col-span-1">
-                        <button id="edit" type="button" className="py-1 px-2 flex justify-center items-center  bg-lime-500 hover:bg-lime-600 focus:ring-lime-500 focus:ring-offset-lime-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                        <button onClick={() => self.editarTarea(task)} id="edit" type="button" className="py-1 px-2 flex justify-center items-center  bg-lime-500 hover:bg-lime-600 focus:ring-lime-500 focus:ring-offset-lime-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
 
 
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -144,7 +229,7 @@ class App extends React.Component {
                         </button>
                       </div>
                       <div className="col-span-2 sm:col-span-1">
-                        <button id="delete" type="button" className="py-1 px-2 flex justify-center items-center  bg-red-400 hover:bg-red-600 focus:ring-red-500 focus:ring-offset-red-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                        <button onClick={() => self.eliminarTarea(task)} id="delete" type="button" className="py-1 px-2 flex justify-center items-center  bg-red-400 hover:bg-red-600 focus:ring-red-500 focus:ring-offset-red-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -160,7 +245,11 @@ class App extends React.Component {
 
             </div>
           </div>
+
+
         </div>
+
+
       </div>
 
 
