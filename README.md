@@ -16,4 +16,5 @@ y django-cors-headers para permitir la comunicacion de los recursos entre react 
 ---
 
 ## Capturas de pantalla
+
 ![screenshot_mobile_responsive](https://raw.githubusercontent.com/BazanRuizWilebaldo/listaPendientes/main/screenshots/screenshot_mobile_responsive.png)
