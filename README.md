@@ -1,3 +1,5 @@
+![screenshot](https://raw.githubusercontent.com/BazanRuizWilebaldo/listaPendientes/main/screenshots/screenshot.png)
+
 Aplicación de lista de pendientes utilizando Django para el backend y React para el frontend.
 haciendo uso de Django REST framework para la REST Api y serializacion 
 En react haciendo uso de class base components
