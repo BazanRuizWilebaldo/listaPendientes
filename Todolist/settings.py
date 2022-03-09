@@ -62,7 +62,10 @@ ROOT_URLCONF = 'Todolist.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR,'frontend/build'),
+            
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,6 +133,9 @@ STATIC_URL = '/static/'
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
+]
+STATICFILES_DIRS  = [
+     os.path.join(BASE_DIR,'frontend/build/static'),
 ]
 
 # Default primary key field type

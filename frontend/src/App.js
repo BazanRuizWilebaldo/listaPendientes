@@ -28,6 +28,11 @@ class App extends React.Component {
     this.fetchTasks()
   }
 
+
+  /* funcion que retorna el token de csrftoken, 
+  que se  ha habilitado  para la protección CSRF para las vistas. 
+  */
+
   getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -42,8 +47,12 @@ class App extends React.Component {
     }
     return cookieValue;
   }
+
+  /*
+  funcion  que retorna todas las tareas
+  */
   fetchTasks() {
-    console.log('obteninedo...')
+    console.log('obteninedo tareas...')
 
     fetch('http://127.0.0.1:8000/api/task-list/')
       .then(response => response.json())
@@ -55,11 +64,13 @@ class App extends React.Component {
 
   }
 
+  /*
+  metodo que se encarga de cambiara la tarea activa 
+  */
+
   handleChange(e) {
     var name = e.target.name
     var value = e.target.value
-    console.log('Name:', name)
-    console.log('Value:', value)
 
     this.setState({
       activeItem: {
@@ -69,6 +80,10 @@ class App extends React.Component {
     })
   }
 
+  /*
+  metodo que se encarga de enviar el peticion de edicion o creacion de una
+  nueva tarea
+  */
   handleSubmit(e) {
     e.preventDefault()
     console.log('ITEM:', this.state.activeItem)
@@ -102,6 +117,9 @@ class App extends React.Component {
       console.log('ERROR:', error)
     })
   }
+  /*
+  metodo que se enacraga de cambiar el estado de la tarea a edicion
+  */
 
   editarTarea(task) {
     this.setState({
@@ -110,6 +128,10 @@ class App extends React.Component {
     })
 
   }
+
+  /*
+  metodo que se encarga de eliminar una tarea
+  */
 
   eliminarTarea(task) {
     var csrftoken = this.getCookie('csrftoken')
@@ -124,6 +146,9 @@ class App extends React.Component {
     })
   }
 
+  /*
+  metodo que se encarga de cambiara el estado de la tarea a completado
+  */
   completarTarea(task) {
 
     task.completed = !task.completed
